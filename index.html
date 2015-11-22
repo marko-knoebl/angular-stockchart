@@ -13,13 +13,14 @@
 
     <ul>
       <li ng-repeat="price in prices | orderBy:'date'">
-        {{price.date}}: {{price.close}}
+        {{price.date}}: {{price.close | number:2}}
       </li>
     </ul>
 
     <input type="button" id="btn1" value="Update Prices"></input>
     <input type="text" ng-model="startDate"></input>
-    <input type="text" ng-model="endDate"></input>
+    <input type="text" ng-model="endDate"></input><br>
+    <input type="text" ng-model="symbol"></input>
 
   </div>
 
@@ -31,7 +32,7 @@
       var $scope = angular.element(appElement).scope();
 
       // build a query string to get stock data from yahoo finance
-      var queryString = 'select * from yahoo.finance.historicaldata where symbol = "VXUS" and startDate = "' +
+      var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + $scope.$$childHead.symbol + '" and startDate = "' +
         $scope.$$childHead.startDate +
         '" and endDate = "' + $scope.$$childHead.endDate + '"';
       var queryString = encodeURI(queryString).replace(/=/g, '%3D');

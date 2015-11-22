@@ -17,4 +17,6 @@ stockChartApp.controller('StockChartCtrl', function($scope) {
     date.setYear(date.getYear() - 1);
   }
   $scope.startDate = date.toISOString().slice(0,10);
+
+  $scope.symbol = 'VXUS';
 });
