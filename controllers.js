@@ -2,11 +2,9 @@
 
 /* Controllers */
 
-var stockChartApp = angular.module('stockChartApp', []);
+var stockChartApp = angular.module('stockChartApp', ['n3-line-chart']);
 
 stockChartApp.controller('StockChartCtrl', function($scope) {
-
-  $scope.prices = [];
 
   // default date range: 1 month
   var date = new Date();
@@ -18,5 +16,16 @@ stockChartApp.controller('StockChartCtrl', function($scope) {
   }
   $scope.startDate = date.toISOString().slice(0,10);
 
-  $scope.symbol = 'VXUS';
+  $scope.symbol = '^GSPC';
+});
+
+stockChartApp.controller('InnerChartCtrl', function($scope) {
+
+  $scope.chartOptions = {
+    series: [
+      {
+        y: 'y'
+      }
+    ]
+  }
 });

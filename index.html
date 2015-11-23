@@ -2,25 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Google Phone Gallery</title>
+  <title>Stock Chart</title>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <script src="line-chart.min.js"></script>
   <script src="controllers.js"></script>
 </head>
 <body ng-app="stockChartApp" id="main">
 
   <div ng-controller="StockChartCtrl">
 
-    <ul>
-      <li ng-repeat="price in prices | orderBy:'date'">
-        {{price.date}}: {{price.close | number:2}}
-      </li>
-    </ul>
-
     <input type="button" id="btn1" value="Update Prices"></input>
     <input type="text" ng-model="startDate"></input>
     <input type="text" ng-model="endDate"></input><br>
     <input type="text" ng-model="symbol"></input>
+
+    <div ng-controller="InnerChartCtrl">
+      <linechart data="dataForChart" options="chartOptions"></linechart>
+    </div>
 
   </div>
 
@@ -41,12 +41,14 @@
 
       // retrieve the stock data and change it in the angular model
       $.ajax(queryUrl).done(function(data) {
-        var newClosePrices = [];
-        data.query.results.quote.forEach(function(element) {
-          newClosePrices.push({'date': element['Date'], 'close': element['Close']});
+        var dataForChart = [];
+        var quotes = data.query.results.quote
+        quotes.reverse();
+        quotes.forEach(function(element, index) {
+          dataForChart.push({x: index, y: parseFloat(element.Close)});
         });
         $scope.$apply(function() {
-          $scope.$$childHead.prices = newClosePrices;
+          $scope.$$childHead.dataForChart = dataForChart;
         });
       });
     };
