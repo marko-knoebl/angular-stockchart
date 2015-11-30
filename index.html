@@ -40,6 +40,10 @@
 
       // retrieve the stock data and change it in the angular model
       $.ajax(queryUrl).done(function(data) {
+        if (!data.query.results) {
+          showErrorMessage();
+          return;
+        }
         var dataForChart = [];
         var quotes = data.query.results.quote
         quotes.reverse();
@@ -50,6 +54,10 @@
           $scope.$$childHead.dataForChart = dataForChart;
         });
       });
+    };
+
+    var showErrorMessage = function() {
+      alert('Could not get data from the server: The selected time frame may be too long or too short.')
     };
 
     // add event listeners
