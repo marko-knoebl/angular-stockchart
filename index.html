@@ -13,10 +13,9 @@
 
   <div ng-controller="StockChartCtrl">
 
-    <input type="button" id="btn1" value="Update Prices"></input>
-    <input type="text" ng-model="startDate"></input>
-    <input type="text" ng-model="endDate"></input><br>
-    <input type="text" ng-model="symbol"></input>
+    <input type="text" id="startDateInput" ng-model="startDate" ng-model-options="{updateOn: 'blur'}" ng-change="dateChange()"></input>
+    <input type="text" id="endDateInput" ng-model="endDate" ng-model-options="{updateOn: 'blur'}" ng-change="dateChange()"></input><br>
+    <input type="text" id="symbolInput" ng-model="symbol" ng-model-options="{updateOn: 'blur'}" ng-change="symbolChange()"></input>
 
     <div ng-controller="InnerChartCtrl">
       <linechart data="dataForChart" options="chartOptions"></linechart>
@@ -32,8 +31,8 @@
       var $scope = angular.element(appElement).scope();
 
       // build a query string to get stock data from yahoo finance
-      var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + $scope.$$childHead.symbol + '" and startDate = "' +
-        $scope.$$childHead.startDate +
+      var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + $scope.$$childHead.symbol +
+        '" and startDate = "' + $scope.$$childHead.startDate +
         '" and endDate = "' + $scope.$$childHead.endDate + '"';
       var queryString = encodeURI(queryString).replace(/=/g, '%3D');
       var queryUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + queryString +
@@ -53,9 +52,13 @@
       });
     };
 
-    var btn1 = document.getElementById('btn1');
-    btn1.addEventListener('click', function(event) {
-      updateClosePrices();
+    // add event listeners
+    ['#startDateInput', '#endDateInput', '#symbolInput'].forEach(function(element) {
+      $(element).on('keypress', function(event) {
+        if (event.key === 'Enter') {
+          $(element).trigger('blur');
+        }
+      });
     });
 
     $(document).ready(updateClosePrices);

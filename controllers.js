@@ -5,7 +5,6 @@
 var stockChartApp = angular.module('stockChartApp', ['n3-line-chart']);
 
 stockChartApp.controller('StockChartCtrl', function($scope) {
-
   // default date range: 1 month
   var date = new Date();
   $scope.endDate = date.toISOString().slice(0,10);
@@ -17,6 +16,13 @@ stockChartApp.controller('StockChartCtrl', function($scope) {
   $scope.startDate = date.toISOString().slice(0,10);
 
   $scope.symbol = '^GSPC';
+
+  $scope.symbolChange = function() {
+    updateClosePrices();
+  };
+  $scope.dateChange = function() {
+    updateClosePrices();
+  };
 });
 
 stockChartApp.controller('InnerChartCtrl', function($scope) {
