@@ -1,19 +1,21 @@
 'use strict';
 
-/* Controllers */
-
-var stockChartApp = angular.module('stockChartApp', ['n3-line-chart']);
+var stockChartApp = angular.module('stockChartApp', ['n3-line-chart', 'ngMaterial', 'ngMessages']);
 
 stockChartApp.controller('StockChartCtrl', function($scope) {
   // default date range: 1 month
-  var date = new Date();
-  $scope.endDate = date.toISOString().slice(0,10);
-  date.setMonth(date.getMonth() - 1);
-  if (date.getMonth() === -1) {
-    date.setMonth(11);
-    date.setYear(date.getYear() - 1);
+
+  var startDate = new Date();
+  startDate.setMonth(startDate.getMonth() - 1);
+  if (startDate.getMonth() === -1) {
+    startDate.setMonth(11);
+    startDate.setYear(startDate.getYear() - 1);
   }
-  $scope.startDate = date.toISOString().slice(0,10);
+  $scope.startDate = startDate;
+
+
+  var endDate = new Date();
+  $scope.endDate = endDate;
 
   $scope.symbol = '^GSPC';
 

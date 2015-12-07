@@ -3,18 +3,29 @@
 <head>
   <meta charset="utf-8">
   <title>Stock Chart</title>
+
+  <!--material CSS-->
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.css">
+
+  <!-- angular, angular material js-->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.js"></script>
+  <!--jQuery-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <!--D3 & linechart-->
   <script src="https://d3js.org/d3.v3.min.js"></script>
   <script src="line-chart.min.js"></script>
+  <!--controllers-->
   <script src="controllers.js"></script>
 </head>
 <body ng-app="stockChartApp" id="main">
 
   <div ng-controller="StockChartCtrl">
-
-    <input type="text" id="startDateInput" ng-model="startDate" ng-model-options="{updateOn: 'blur'}" ng-change="dateChange()"></input>
-    <input type="text" id="endDateInput" ng-model="endDate" ng-model-options="{updateOn: 'blur'}" ng-change="dateChange()"></input><br>
+    <md-datepicker ng-model="startDate" md-placeholder="Start date" ng-change="dateChange()"></md-datepicker>
+    <md-datepicker ng-model="endDate" md-placeholder="End Date" ng-change="dateChange()"></md-datepicker>
     <input type="text" id="symbolInput" ng-model="symbol" ng-model-options="{updateOn: 'blur'}" ng-change="symbolChange()"></input>
 
     <div ng-controller="InnerChartCtrl">
@@ -32,8 +43,8 @@
 
       // build a query string to get stock data from yahoo finance
       var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + $scope.$$childHead.symbol +
-        '" and startDate = "' + $scope.$$childHead.startDate +
-        '" and endDate = "' + $scope.$$childHead.endDate + '"';
+        '" and startDate = "' + $scope.$$childHead.startDate.toISOString().slice(0,10) +
+        '" and endDate = "' + $scope.$$childHead.endDate.toISOString().slice(0,10) + '"';
       var queryString = encodeURI(queryString).replace(/=/g, '%3D');
       var queryUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + queryString +
         '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=';
@@ -61,7 +72,7 @@
     };
 
     // add event listeners
-    ['#startDateInput', '#endDateInput', '#symbolInput'].forEach(function(element) {
+    ['#symbolInput'].forEach(function(element) {
       $(element).on('keypress', function(event) {
         if (event.key === 'Enter') {
           $(element).trigger('blur');
