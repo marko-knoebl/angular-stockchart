@@ -26,25 +26,31 @@
 <body ng-app="stockChartApp" id="main">
 
   <div ng-controller="StockChartCtrl as stockChartCtrl">
-    <md-menu>
-      <md-button ng-model="dateRange" ng-click="stockChartCtrl.openMenu($mdOpenMenu, $event)">
-        {{timeframe}}<md-icon md-font-library="material-icons">arrow_drop_down</md-icon>
-      </md-button>
-
-      <md-menu-content width="3">
-        <md-menu-item ng-repeat="tf in ['1 Month', '2 Months', '3 Months', '6 Months', '10 Months']">
-          <md-button ng-click="$parent.$parent.timeframe = tf">
-            {{tf}}
+    <md-content layout="column">
+      <md-content layout="row" layout-sm="column">
+        <md-input-container style="padding-bottom:2px">
+          <label>Stock Symbol</label>
+          <input type="text" id="symbolInput" ng-model="symbol" ng-model-options="{updateOn: 'blur'}" ng-change="symbolChange()">
+        </md-input-container>
+        <md-menu style="padding-bottom:2px; padding-top:2px">
+          <md-button ng-model="dateRange" ng-click="stockChartCtrl.openMenu($mdOpenMenu, $event)">
+            {{timeframe}}<md-icon md-font-library="material-icons">arrow_drop_down</md-icon>
           </md-button>
-        </md-menu-item>
-      </md-menu-content>
-    </md-menu><br>
-    <input type="text" id="symbolInput" ng-model="symbol" ng-model-options="{updateOn: 'blur'}" ng-change="symbolChange()"></input>
-
-    <div ng-controller="InnerChartCtrl">
-      <linechart data="dataForChart" options="chartOptions"></linechart>
-    </div>
-
+          <md-menu-content width="3">
+            <md-menu-item ng-repeat="tf in ['1 Month', '2 Months', '3 Months', '6 Months', '10 Months']">
+              <md-button ng-click="$parent.$parent.timeframe = tf">
+                {{tf}}
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
+      </md-content>
+      <md-content layout="row">
+        <div ng-controller="InnerChartCtrl">
+          <linechart data="dataForChart" options="chartOptions"></linechart>
+        </div>
+      </md-content>
+    </md-content>
   </div>
 
   <script>
