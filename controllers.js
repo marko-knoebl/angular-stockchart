@@ -4,26 +4,31 @@ var stockChartApp = angular.module('stockChartApp', ['n3-line-chart', 'ngMateria
 
 stockChartApp.controller('StockChartCtrl', function($scope) {
   // default date range: 1 month
+  $scope.timeframe = '1 Month';
 
-  var startDate = new Date();
-  startDate.setMonth(startDate.getMonth() - 1);
-  if (startDate.getMonth() === -1) {
-    startDate.setMonth(11);
-    startDate.setYear(startDate.getYear() - 1);
-  }
-  $scope.startDate = startDate;
-
-
-  var endDate = new Date();
-  $scope.endDate = endDate;
-
+  // default symbol: ^GSPC (S&P 500)
   $scope.symbol = '^GSPC';
+
+  $scope.$watch('timeframe', function(newValue) {
+    var startDate = new Date();
+    // number of months
+    var duration = parseInt(newValue);
+    
+    startDate.setMonth(startDate.getMonth() - duration);
+    if (startDate.getMonth() < 0) {
+      startDate.setMonth(startDate.getMonth() % 12);
+      startDate.setYear(startDate.getYear() - 1);
+    }
+    $scope.startDate = startDate;
+    updateClosePrices();
+  });
 
   $scope.symbolChange = function() {
     updateClosePrices();
   };
-  $scope.dateChange = function() {
-    updateClosePrices();
+
+  this.openMenu = function($mdOpenMenu, ev) {
+    $mdOpenMenu(ev);
   };
 });
 
