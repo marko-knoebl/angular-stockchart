@@ -55,33 +55,59 @@
 
   <script>
 
-    var getClosePrices = function(symbol, startDate, endDate, callback) {
-      // get the close prices of a stock/symbol, in the selected timeframe
-      // then, pass the prices to the callback
-      var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + symbol +
-        '" and startDate = "' + startDate.toISOString().slice(0, 10) +
-        '" and endDate = "' + endDate.toISOString().slice(0, 10) + '"';
-      var queryUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + queryString +
-        '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callaback=';
-      $.ajax(queryUrl).done(function(data) {
-        if (!data.query.results) {
-          showErrorMessage();
-          return;
+    var quoteStorage = {};
+
+    var updateStoredClosePrices = function(symbol, startDate, endDate, callback) {
+      // update the corresponding entry in quoteStorage (for the last 10 months);
+      // then, call the callback
+      // TODO: branch here
+      if (!(symbol in quoteStorage) || true) {
+        // not stored yet
+
+        var startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 10);
+        if (startDate.getMonth() < 0) {
+          startDate.setMonth(startDate.getMonth() + 12);
+          startDate.setYear(startDate.getYear() - 1);
         }
-        // only return close prices with dates >= startDate
-        var filteredPrices = [];
-        var quotes = data.query.results.quote;
-        for (var i = 0; i < quotes.length; i ++) {
-          if (quotes[i].Date >= startDate.toISOString().slice(0, 10)) {
-            filteredPrices.push(quotes[i]);
+        var endDate = new Date();
+        
+        var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + symbol +
+          '" and startDate = "' + startDate.toISOString().slice(0, 10) +
+          '" and endDate = "' + endDate.toISOString().slice(0, 10) + '"';
+        var queryUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + queryString +
+          '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callaback=';
+        $.ajax(queryUrl).done(function(data) {
+          if (!data.query.results) {
+            showErrorMessage();
+            return;
           }
-        };
+          // store the retrieved data
+          quoteStorage[symbol] = data.query.results.quote;
+          callback();
+        });
+      } else {
+        callback();
+        return;
+      }
+    }
+
+    var getClosePrices = function(symbol, startDate, endDate, callback) {
+      // get the close prices from the specified date range and pass them to 'callback'
+      updateStoredClosePrices(symbol, startDate, endDate, function() {
+        var filteredPrices = [];
+        var quotes = quoteStorage[symbol];
+        for (var i = 0; i < quoteStorage[symbol].length; i ++) {
+          if (quoteStorage[symbol][i].Date >= startDate.toISOString().slice(0, 10)) {
+            filteredPrices.push(quoteStorage[symbol][i]);
+          }
+        }
         callback(filteredPrices);
       });
     };
 
     var updateClosePrices = function() {
-
+      // update displayed prices
       var appElement = document.getElementById('main');
       var $scope = angular.element(appElement).scope();
 
