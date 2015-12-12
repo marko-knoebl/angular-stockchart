@@ -23,15 +23,13 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
     return date;
   };
 
-  var updateStoredClosePrices = function(symbol, startDate, endDate, callback) {
-    // update the corresponding entry in quoteStorage (for the last 10 months);
+  var updateStoredClosePrices = function(symbol, callback) {
+    // make sure the quote in quoteStorage is up-to-date
     // then, call the callback
-    // TODO: branch here
-    if (!(symbol in quoteStorage) || true) {
+    var startDate = pastDate(0, 10);
+    var endDate = new Date();
+    if (!(symbol in quoteStorage)) {
       // not stored yet
-
-      var endDate = new Date();
-      
       var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + symbol +
         '" and startDate = "' + startDate.toISOString().slice(0, 10) +
         '" and endDate = "' + endDate.toISOString().slice(0, 10) + '"';
@@ -46,17 +44,19 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
           // store the retrieved data
           quoteStorage[symbol] = request.data.query.results.quote;
           callback();
+        },
+        function(request) {
+          showErrorMessage();
         }
       );
     } else {
       callback();
-      return;
     }
   };
 
   var getClosePrices = function(symbol, startDate, endDate, callback) {
     // get the close prices from the specified date range and pass them to 'callback'
-    updateStoredClosePrices(symbol, startDate, endDate, function() {
+    updateStoredClosePrices(symbol, function() {
       var filteredPrices = [];
       var quotes = quoteStorage[symbol];
       for (var i = 0; i < quoteStorage[symbol].length; i ++) {
