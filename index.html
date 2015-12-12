@@ -33,7 +33,7 @@
           <input type="text" id="symbolInput" ng-model="symbol" ng-model-options="{updateOn: 'blur'}" ng-change="symbolChange()">
         </md-input-container>
         <md-menu style="padding-bottom:2px; padding-top:2px">
-          <md-button ng-model="dateRange" ng-click="stockChartCtrl.openMenu($mdOpenMenu, $event)">
+          <md-button ng-click="stockChartCtrl.openMenu($mdOpenMenu, $event)">
             {{timeframe}}<md-icon md-font-library="material-icons">arrow_drop_down</md-icon>
           </md-button>
           <md-menu-content width="3">

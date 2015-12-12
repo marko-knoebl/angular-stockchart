@@ -18,12 +18,6 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
     if (!(symbol in quoteStorage) || true) {
       // not stored yet
 
-      var startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 10);
-      if (startDate.getMonth() < 0) {
-        startDate.setMonth(startDate.getMonth() + 12);
-        startDate.setYear(startDate.getYear() - 1);
-      }
       var endDate = new Date();
       
       var queryString = 'select * from yahoo.finance.historicaldata where symbol = "' + symbol +
@@ -62,8 +56,17 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
 
   var updateClosePrices = function() {
 
+    var duration = parseInt($scope.timeframe);
+
+    var startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - duration);
+    if (startDate.getMonth() < 0) {
+      startDate.setMonth(startDate.getMonth() % 12);
+      startDate.setYear(startDate.getYear() - 1);
+    }
+
     // retrieve the stock data and change it in the angular model
-    getClosePrices($scope.symbol, $scope.startDate, new Date(), function(quotes) {
+    getClosePrices($scope.symbol, startDate, new Date(), function(quotes) {
       var dataForChart = [];
       quotes.reverse();
       quotes.forEach(function(element, index) {
@@ -78,26 +81,12 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
   $(document).ready(updateClosePrices);
 
   var showErrorMessage = function() {
-    alert('Could not get data from the server: The selected time frame may be too long or too short.')
+    alert('Could not get data from the server.')
   };
 
-  $scope.$watch('timeframe', function(newValue) {
-    var startDate = new Date();
-    // number of months
-    var duration = parseInt(newValue);
-    
-    startDate.setMonth(startDate.getMonth() - duration);
-    if (startDate.getMonth() < 0) {
-      startDate.setMonth(startDate.getMonth() % 12);
-      startDate.setYear(startDate.getYear() - 1);
-    }
-    $scope.startDate = startDate;
-    updateClosePrices();
-  });
+  $scope.$watch('timeframe', updateClosePrices);
 
-  $scope.symbolChange = function() {
-    updateClosePrices();
-  };
+  $scope.symbolChange = updateClosePrices;
 
   this.openMenu = function($mdOpenMenu, ev) {
     $mdOpenMenu(ev);
