@@ -24,16 +24,18 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
         '" and startDate = "' + startDate.toISOString().slice(0, 10) +
         '" and endDate = "' + endDate.toISOString().slice(0, 10) + '"';
       var queryUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + queryString +
-        '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callaback=';
-      $.ajax(queryUrl).done(function(data) {
-        if (!data.query.results) {
-          showErrorMessage();
-          return;
+        '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys';
+      $http({method: 'GET', url: queryUrl}).then(
+        function(request) {
+          if (!request.data.query.results) {
+            showErrorMessage();
+            return;
+          }
+          // store the retrieved data
+          quoteStorage[symbol] = request.data.query.results.quote;
+          callback();
         }
-        // store the retrieved data
-        quoteStorage[symbol] = data.query.results.quote;
-        callback();
-      });
+      );
     } else {
       callback();
       return;
@@ -72,9 +74,9 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
       quotes.forEach(function(element, index) {
         dataForChart.push({x: index, y: parseFloat(element.Close)});
       });
-      $scope.$apply(function() {
+      //$scope.$apply(function() {
         $scope.dataForChart = dataForChart;
-      });
+      //});
     });
   };
 
