@@ -11,6 +11,18 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
 
   var quoteStorage = {};
 
+  var pastDate = function(years, months) {
+    // return the date that's the specified years and months in the past
+    var date = new Date();
+    date.setYear(date.getFullYear() - 0);
+    date.setMonth(date.getMonth() - months);
+    if (date.getMonth() < 0) {
+      date.setMonth(date.getMonth() % 12);
+      date.setYear(date.getFullYear() - 1);
+    }
+    return date;
+  };
+
   var updateStoredClosePrices = function(symbol, startDate, endDate, callback) {
     // update the corresponding entry in quoteStorage (for the last 10 months);
     // then, call the callback
@@ -60,12 +72,7 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
 
     var duration = parseInt($scope.timeframe);
 
-    var startDate = new Date();
-    startDate.setMonth(startDate.getMonth() - duration);
-    if (startDate.getMonth() < 0) {
-      startDate.setMonth(startDate.getMonth() % 12);
-      startDate.setYear(startDate.getYear() - 1);
-    }
+    var startDate = pastDate(0, duration);
 
     // retrieve the stock data and change it in the angular model
     getClosePrices($scope.symbol, startDate, new Date(), function(quotes) {
