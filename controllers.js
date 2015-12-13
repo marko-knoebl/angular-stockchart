@@ -26,6 +26,7 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
   var updateStoredClosePrices = function(symbol, callback) {
     // make sure the quote in quoteStorage is up-to-date
     // then, call the callback
+    symbol = symbol.toLowerCase();
     var startDate = pastDate(0, 10);
     var endDate = new Date();
     if (!(symbol in quoteStorage)) {
@@ -56,6 +57,7 @@ stockChartApp.controller('StockChartCtrl', function($scope, $http) {
 
   var getClosePrices = function(symbol, startDate, endDate, callback) {
     // get the close prices from the specified date range and pass them to 'callback'
+    symbol = symbol.toLowerCase();
     updateStoredClosePrices(symbol, function() {
       var filteredPrices = [];
       var quotes = quoteStorage[symbol];
