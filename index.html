@@ -30,7 +30,7 @@
       <md-content layout="row" layout-sm="column">
         <md-input-container style="padding-bottom:2px">
           <label>Stock Symbol</label>
-          <input type="text" id="symbolInput" ng-model="symbol" ng-model-options="{updateOn: 'blur'}" ng-change="symbolChange()">
+          <input type="text" id="symbolInput" ng-model="symbol" ng-model-options="{updateOn: 'blur'}" ng-change="symbolChange()"></input>
         </md-input-container>
         <md-menu style="padding-bottom:2px; padding-top:2px">
           <md-button ng-click="stockChartCtrl.openMenu($mdOpenMenu, $event)">
@@ -45,10 +45,8 @@
           </md-menu-content>
         </md-menu>
       </md-content>
-      <md-content layout="row">
-        <div ng-controller="InnerChartCtrl">
-          <linechart data="dataForChart" options="chartOptions"></linechart>
-        </div>
+      <md-content layout="row" layout-align="center" ng-controller="InnerChartCtrl">
+        <linechart data="dataForChart" options="chartOptions"></linechart>
       </md-content>
     </md-content>
   </div>
