@@ -27,7 +27,7 @@
 <body ng-app="stockChartApp" id="main">
 
   <div ng-controller="StockChartCtrl as stockChartCtrl">
-    <md-content layout="column">
+    <md-content layout="column"  style="height:100vh">
       <md-content layout="row" layout-sm="column">
         <md-input-container style="padding-bottom:2px">
           <label>Stock Symbol</label>
@@ -46,7 +46,7 @@
           </md-menu-content>
         </md-menu>
       </md-content>
-      <md-content layout="row" layout-align="center" ng-controller="InnerChartCtrl">
+      <md-content layout="row" layout-align="center" ng-controller="InnerChartCtrl" flex>
         <linechart data="dataForChart" options="chartOptions"></linechart>
       </md-content>
     </md-content>
